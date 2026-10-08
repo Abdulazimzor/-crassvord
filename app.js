@@ -133,6 +133,10 @@
   const progressBarFill = document.getElementById('progress-bar-fill');
   const correctWordsCount = document.getElementById('correct-words-count');
   const toastNotification = document.getElementById('toast-notification');
+  const tabAcrossBtn = document.getElementById('tab-across-btn');
+  const tabDownBtn = document.getElementById('tab-down-btn');
+  const acrossSection = document.getElementById('across-clue-section');
+  const downSection = document.getElementById('down-clue-section');
 
   // Tugmalar va hisoblagichlar
   const checkBtn = document.getElementById('check-btn');
@@ -367,6 +371,8 @@
           inputEl.autocomplete = 'off';
           inputEl.autocapitalize = 'characters';
           inputEl.spellcheck = false;
+          inputEl.setAttribute('inputmode', 'text');
+          inputEl.setAttribute('enterkeyhint', 'next');
           inputEl.dataset.row = r;
           inputEl.dataset.col = c;
           inputEl.setAttribute('aria-label', `Katakcha: Qator ${r}, Ustun ${c}`);
@@ -559,6 +565,11 @@
       // Banner ma'lumotini yangilash
       activeClueBadge.textContent = `${currentWord.number}-${currentWord.direction === 'across' ? 'Gorizontal' : 'Vertikal'}`;
       activeClueText.textContent = `${currentWord.clue} (${currentWord.length} ta harf)`;
+
+      // Mobil qurilmalarda tegishli savollar bo'limini faollashtirish
+      if (window.innerWidth <= 768) {
+        switchMobileTab(currentWord.direction, false);
+      }
     }
 
     // 3. Tanlangan fokusdagi katakchani ajratib ko'rsatish
@@ -1190,6 +1201,22 @@
     }
   }
 
+  function switchMobileTab(target, shouldPlaySound = false) {
+    if (!tabAcrossBtn || !tabDownBtn || !acrossSection || !downSection) return;
+    if (target === 'across') {
+      tabAcrossBtn.classList.add('active');
+      tabDownBtn.classList.remove('active');
+      acrossSection.classList.remove('mobile-tab-hidden');
+      downSection.classList.add('mobile-tab-hidden');
+    } else {
+      tabDownBtn.classList.add('active');
+      tabAcrossBtn.classList.remove('active');
+      downSection.classList.remove('mobile-tab-hidden');
+      acrossSection.classList.add('mobile-tab-hidden');
+    }
+    if (shouldPlaySound) playSound('select');
+  }
+
   // --- 16. Hodisalar Tinglovchilari (Event Listeners) ---
   function initEventListeners() {
     checkBtn.addEventListener('click', checkAnswers);
@@ -1219,6 +1246,10 @@
 
     soundBtn.addEventListener('click', toggleSound);
     themeBtn.addEventListener('click', toggleTheme);
+
+    // Mobil savollar tablari
+    if (tabAcrossBtn) tabAcrossBtn.addEventListener('click', () => switchMobileTab('across', true));
+    if (tabDownBtn) tabDownBtn.addEventListener('click', () => switchMobileTab('down', true));
 
     helpBtn.addEventListener('click', () => {
       helpModal.classList.remove('hidden');
