@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interaktiv Krossvord — O'zbek Tili</title>
+  <meta name="description" content="Zamonaviy, qulay va interaktiv o'zbekcha krossvord o'yini. So'z boyligingizni sinab ko'ring va aql charxlang!">
+  <meta name="keywords" content="krossvord, uzbekcha krossvord, boshqotirma, o'yin, so'z topish, interactive crossword">
+  
+  <!-- Favicon SVG -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234f46e5'/><rect x='20' y='20' width='25' height='25' rx='5' fill='%23ffffff'/><rect x='55' y='20' width='25' height='25' rx='5' fill='%236366f1'/><rect x='20' y='55' width='25' height='25' rx='5' fill='%236366f1'/><rect x='55' y='55' width='25' height='25' rx='5' fill='%2310b981'/><text x='32' y='38' font-family='sans-serif' font-size='16' font-weight='bold' fill='%231e1b4b'>K</text></svg>">
+  
+  <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+  <!-- Dynamic Canvas for Confetti Fireworks -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="app-wrapper">
+    <!-- Ambient Luxury Glowing Orbs -->
+    <div class="ambient-glow ambient-glow-1" aria-hidden="true"></div>
+    <div class="ambient-glow ambient-glow-2" aria-hidden="true"></div>
+    <div class="ambient-glow ambient-glow-3" aria-hidden="true"></div>
+
+    <!-- Header Navigation -->
+    <header class="app-header">
+      <div class="brand-container">
+        <div class="brand-icon">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="32" height="32" rx="8" fill="url(#brand-grad)" />
+            <rect x="6" y="6" width="8" height="8" rx="2" fill="#FFFFFF" fill-opacity="0.95" />
+            <rect x="18" y="6" width="8" height="8" rx="2" fill="#FFFFFF" fill-opacity="0.3" />
+            <rect x="6" y="18" width="8" height="8" rx="2" fill="#FFFFFF" fill-opacity="0.3" />
+            <rect x="18" y="18" width="8" height="8" rx="2" fill="#10B981" />
+            <defs>
+              <linearGradient id="brand-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#6366F1" />
+                <stop offset="1" stop-color="#4F46E5" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">KROSSVORD</h1>
+          <p class="brand-subtitle">Interaktiv O'zbekcha Boshqotirma</p>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <!-- Timer Display with live pulse dot -->
+        <div class="stat-pill timer-pill" id="timer-container" title="Boshlangan vaqtdan beri o'tgan vaqt">
+          <span class="live-pulse-dot" aria-hidden="true"></span>
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span id="timer-display">00:00</span>
+        </div>
+
+        <!-- Sound Toggle Button -->
+        <button id="sound-btn" class="icon-btn" title="Ovozni yoqish / o'chirish" aria-label="Ovoz sozlamasi">
+          <svg id="sound-icon-on" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+          <svg id="sound-icon-off" class="icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          </svg>
+        </button>
+
+        <!-- Dark/Light Theme Toggle -->
+        <button id="theme-btn" class="icon-btn" title="Yorug' / Qorong'u rejim" aria-label="Mavzuni almashtirish">
+          <svg id="theme-icon-sun" class="icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg id="theme-icon-moon" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+
+        <!-- Help Info Button -->
+        <button id="help-btn" class="icon-btn" title="O'yin qoidalari va yordam" aria-label="Qoidalar">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Top Status Banner & Progress Bar -->
+    <section class="progress-section" aria-label="O'yin holati">
+      <div class="progress-info">
+        <span class="progress-label">To'ldirilgan: <strong id="progress-text">0 / 20 harf (0%)</strong></span>
+        <span class="score-badge" id="score-badge">To'g'ri so'zlar: <strong id="correct-words-count">0</strong> / 5</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progress-bar-fill" style="width: 0%;"></div>
+      </div>
+    </section>
+
+    <!-- Main Game Workspace -->
+    <main class="main-content">
+      <!-- Left Column: Crossword Board -->
+      <section class="board-column">
+        <!-- Active Word Banner / Instruction -->
+        <div class="active-clue-bar" id="active-clue-bar">
+          <div class="active-clue-badge" id="active-clue-badge">1-Gorizontal</div>
+          <div class="active-clue-text" id="active-clue-text">Krossvord katakchasini yoki savolni bosing</div>
+        </div>
+
+        <!-- Crossword Grid Board -->
+        <div class="board-container">
+          <div id="crossword-grid" class="crossword-grid" role="grid" aria-label="7x7 Krossvord katakchalari">
+            <!-- Dynamically generated 7x7 grid cells -->
+          </div>
+        </div>
+
+        <!-- Action Control Buttons with Limit Badges -->
+        <div class="action-buttons-bar">
+          <button id="check-btn" class="btn btn-primary" title="Javoblarni tekshirish">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Tekshirish</span>
+          </button>
+
+          <button id="hint-btn" class="btn btn-secondary btn-with-counter" title="Tanlangan katakdagi harfni ochish (Jami 3 marta)">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18h6"></path>
+              <path d="M10 22h4"></path>
+              <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path>
+            </svg>
+            <span>Harfni ochish</span>
+            <span class="limit-pill" id="hint-counter">3/3</span>
+          </button>
+
+          <button id="reveal-word-btn" class="btn btn-secondary btn-with-counter" title="Butun so'zni ko'rsatish (Faqat 1 marta)">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <span>So'zni ochish</span>
+            <span class="limit-pill" id="word-counter">1/1</span>
+          </button>
+
+          <button id="reset-btn" class="btn btn-danger-outline" title="Kataklarni tozalash">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+            </svg>
+            <span>Tozalash</span>
+          </button>
+        </div>
+
+        <!-- Quick Keyboard Tips Bar -->
+        <div class="keyboard-tips">
+          <span><kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> Harakatlanish</span>
+          <span><kbd>Bo'shliq / Click</kbd> Yo'nalishni o'zgartirish</span>
+          <span><kbd>Backspace</kbd> O'chirish & qaytish</span>
+        </div>
+      </section>
+
+      <!-- Right Column: Clues / Savollar -->
+      <aside class="clues-column" aria-label="Savollar ro'yxati">
+        <div class="clues-header-tabs">
+          <h2 class="clues-main-title">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Savollar (Clues)
+          </h2>
+          <span class="clues-subtitle">So'zni belgilash uchun savol ustiga bosing</span>
+        </div>
+
+        <div class="clues-grid">
+          <!-- Across Clues (Gorizontal) -->
+          <div class="clue-section" id="across-clue-section">
+            <div class="clue-section-header">
+              <span class="direction-indicator across-indicator">
+                <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+                Gorizontal (Eniga)
+              </span>
+              <span class="clues-count-tag" id="across-count-tag">3 ta so'z</span>
+            </div>
+            <div class="clues-list" id="across-clues-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Down Clues (Vertikal) -->
+          <div class="clue-section" id="down-clue-section">
+            <div class="clue-section-header">
+              <span class="direction-indicator down-indicator">
+                <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <polyline points="19 12 12 19 5 12"></polyline>
+                </svg>
+                Vertikal (Bo'yiga)
+              </span>
+              <span class="clues-count-tag" id="down-count-tag">2 ta so'z</span>
+            </div>
+            <div class="clues-list" id="down-clues-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Extra Tools & Print -->
+        <div class="clues-footer">
+          <button id="print-btn" class="footer-action-btn" title="Krossvordni qog'ozga chop etish">
+            <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            Chop etish (Print)
+          </button>
+          <button id="show-solution-btn" class="footer-action-btn" title="To'liq yechimni ko'rish">
+            <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            Yechimni ko'rsatish
+          </button>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Feedback Toast Notification -->
+    <div id="toast-notification" class="toast-notification" role="status" aria-live="polite"></div>
+
+    <!-- Celebration Victory Modal -->
+    <div id="victory-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-card">
+        <div class="modal-celebrate-badge">🏆</div>
+        <div class="victory-stars" id="victory-stars">⭐⭐⭐</div>
+        <h2 id="modal-title" class="modal-title">TABRIKLAYMIZ!</h2>
+        <p class="modal-subtitle">Siz barcha so'zlarni a'lo darajada to'g'ri topdingiz!</p>
+
+        <div class="modal-stats-box">
+          <div class="modal-stat-item">
+            <span class="modal-stat-value" id="modal-score">5 / 5</span>
+            <span class="modal-stat-label">To'g'ri so'zlar</span>
+          </div>
+          <div class="modal-stat-divider"></div>
+          <div class="modal-stat-item">
+            <span class="modal-stat-value" id="modal-time">01:45</span>
+            <span class="modal-stat-label">Sarflangan vaqt</span>
+          </div>
+          <div class="modal-stat-divider"></div>
+          <div class="modal-stat-item">
+            <span class="modal-stat-value" id="modal-accuracy">100%</span>
+            <span class="modal-stat-label">Aniqlik</span>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="modal-restart-btn" class="btn btn-primary modal-action-btn">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+            </svg>
+            Qaytadan o'ynash
+          </button>
+          <button id="modal-close-btn" class="btn btn-secondary modal-action-btn">
+            Yopish
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rules / Help Modal -->
+    <div id="help-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
+      <div class="modal-card help-card">
+        <div class="modal-header-row">
+          <h2 id="help-modal-title" class="modal-title">Krossvord Qoidalari</h2>
+          <button id="help-close-x" class="icon-btn-close" aria-label="Yopish">✕</button>
+        </div>
+        <div class="help-content">
+          <div class="help-step">
+            <span class="step-num">1</span>
+            <p><strong>Katakchalarni to'ldiring:</strong> Har bir oq katakchaga klaviatura orqali bittadan harf yozing. Harflar avtomatik ravishda bosh harfga aylanadi.</p>
+          </div>
+          <div class="help-step">
+            <span class="step-num">2</span>
+            <p><strong>Yo'nalishni o'zgartirish:</strong> Katakchani ikki marta bosing yoki klaviaturadagi <code>Bo'shliq (Space)</code> tugmasini bosing — yo'nalish Gorizontal va Vertikal o'rtasida almashadi.</p>
+          </div>
+          <div class="help-step">
+            <span class="step-num">3</span>
+            <p><strong>Savollar:</strong> O'ng ustundagi istalgan savol ustiga bosib, krossvorddagi tegishli so'zga to'g'ridan-to'g'ri o'tishingiz mumkin.</p>
+          </div>
+          <div class="help-step">
+            <span class="step-num">4</span>
+            <p><strong>Tekshirish:</strong> Yozib bo'lgach, pastdagi <strong>"Tekshirish"</strong> tugmasini bosing. To'g'ri harflar yashil, xatolari esa qizil rangda tebranib ko'rsatiladi.</p>
+          </div>
+        </div>
+        <button id="help-close-btn" class="btn btn-primary full-width-btn">Tushunarli, o'yinni boshlash</button>
+      </div>
+    </div>
+
+    <!-- Clear Confirmation Modal -->
+    <div id="confirm-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+      <div class="modal-card mini-card">
+        <h3 class="mini-title">Barcha katakchalarni tozalaysizmi?</h3>
+        <p class="mini-text">Kiritilgan barcha harflar va natijalar o'chiriladi.</p>
+        <div class="modal-actions">
+          <button id="confirm-yes-btn" class="btn btn-danger-filled">Ha, tozalash</button>
+          <button id="confirm-no-btn" class="btn btn-secondary">Bekor qilish</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>© 2026 Interaktiv Krossvord — O'zbek tili lug'at boyligi va mantiqiy tafakkur uchun maxsus yaratildi.</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

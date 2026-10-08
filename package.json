@@ -1,0 +1,23 @@
+{
+  "name": "krasvord-uzbek",
+  "version": "1.0.0",
+  "description": "Interaktiv O'zbekcha Krossvord — Zamonaviy web ilova",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "krossvord",
+    "crossword",
+    "uzbek",
+    "puzzle"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}
